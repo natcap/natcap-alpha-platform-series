@@ -1,0 +1,2 @@
+https://storage.googleapis.com/ecoshard-root/alpha-platform-series/DEM_md5_53d4998eec75d803a318fafd28c40a3e.tif
+https://storage.googleapis.com/ecoshard-root/alpha-platform-series/LULC_2000_md5_e0523f6f5c4bc8e9ee4865958fe876e0.tif
