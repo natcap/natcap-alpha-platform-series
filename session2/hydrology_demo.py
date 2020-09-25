@@ -22,3 +22,9 @@ if __name__ == '__main__':
     flow_accum_mfd_path = 'mfd_flow_accum.tif'
     pygeoprocessing.routing.flow_accumulation_mfd(
         (mfd_flow_raster_path, 1), flow_accum_mfd_path)
+
+    stream_raster_path = 'stream.tif'
+
+    pygeoprocessing.routing.extract_streams_mfd(
+        (flow_accum_mfd_path, 1), (mfd_flow_raster_path, 1),
+        100, stream_raster_path)
