@@ -19,11 +19,18 @@ if __name__ == '__main__':
     lulc_raster_info = pygeoprocessing.get_raster_info(lulc_raster_path)
     biomass_raster_info = pygeoprocessing.get_raster_info(biomass_raster_path)
 
+    LOGGER.debug(str(lulc_raster_info))
+    LOGGER.info(str(biomass_raster_info))
+
     workspace_dir = 'raster_by_raster_workspace'
 
     # TODO: ensure lulc and biomass are aligned
 
-    # TODO: calcualte stats by lulc vs. biomass
+    # TODO: calculate stats by lulc vs. biomass
+    for offset_dict, data_block in pygeoprocessing.iterblocks(
+            (lulc_raster_path, 1)):
+        LOGGER.debug(offset_dict)
+        LOGGER.debug(data_block)
 
     #   report: 1 line per unique lulc code,
     print('line: lulc code, pixel count, biomass sum, average biomass')
