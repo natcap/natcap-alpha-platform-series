@@ -5,6 +5,8 @@ import logging
 import pygeoprocessing
 import numpy
 
+from osgeo import gdal
+
 logging.basicConfig(
     level=logging.DEBUG,
     format=(
@@ -36,19 +38,34 @@ if __name__ == '__main__':
         lulc_raster_info['raster_size'][0] *
         lulc_raster_info['raster_size'][1])
     lulc_pixels_processed = 0
-    for offset_dict, data_block in pygeoprocessing.iterblocks(
-            (lulc_raster_path, 1), largest_block=0):
-        unique_lulc_codes.update(numpy.unique(data_block))
 
-        for lulc_code in numpy.unique(data_block):
-            lulc_code_count[lulc_code] += numpy.count_nonzero(
-                data_block == lulc_code)
-
-        lulc_pixels_processed += (
-            offset_dict['win_xsize'] * offset_dict['win_ysize'])
-
+    lulc_raster = gdal.OpenEx(lulc_raster_path, gdal.OF_RASTER)
+    lulc_band = lulc_raster.GetRasterBand(1)
+    lulc_array = lulc_band.ReadAsArray()
+    LOGGER.debug(lulc_array)
+    for row in range(lulc_raster_info['raster_size'][1]):
+        for col in range(lulc_raster_info['raster_size'][0]):
+            lulc_code = lulc_array[row, col]
+            lulc_code_count[lulc_code] += 1
+            lulc_pixels_processed += 1
         LOGGER.info(
-            f'{lulc_pixels_processed/lulc_pixel_total_count*100:.2f}% complete')
+             f'{lulc_pixels_processed/lulc_pixel_total_count*100:.2f}% '
+             'complete')
+
+
+    # for offset_dict, data_block in pygeoprocessing.iterblocks(
+    #         (lulc_raster_path, 1), largest_block=0):
+    #     unique_lulc_codes.update(numpy.unique(data_block))
+
+    #     for lulc_code in numpy.unique(data_block):
+    #         lulc_code_count[lulc_code] += numpy.count_nonzero(
+    #             data_block == lulc_code)
+
+    #     lulc_pixels_processed += (
+    #         offset_dict['win_xsize'] * offset_dict['win_ysize'])
+
+    #     LOGGER.info(
+    #         f'{lulc_pixels_processed/lulc_pixel_total_count*100:.2f}% complete')
 
     LOGGER.debug(f'unique_lulc_codes: {list(sorted(unique_lulc_codes))}')
     LOGGER.debug(f'lulc code counts: {lulc_code_count}')
