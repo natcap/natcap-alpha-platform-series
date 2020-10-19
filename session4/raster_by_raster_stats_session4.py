@@ -21,7 +21,7 @@ if __name__ == '__main__':
     lulc_raster_info = pygeoprocessing.get_raster_info(lulc_raster_path)
     biomass_raster_info = pygeoprocessing.get_raster_info(biomass_raster_path)
 
-    LOGGER.debug(str(lulc_raster_info))
+    LOGGER.debug(f'**************** {str(lulc_raster_info)}')
     LOGGER.info(str(biomass_raster_info))
 
     workspace_dir = 'raster_by_raster_workspace'
@@ -32,15 +32,26 @@ if __name__ == '__main__':
 
     unique_lulc_codes = set()
     lulc_code_count = collections.defaultdict(int)
+
     for offset_dict, data_block in pygeoprocessing.iterblocks(
-            (lulc_raster_path, 1)):
-        # LOGGER.debug(offset_dict)
-        #LOGGER.debug(numpy.unique(data_block))
+            (lulc_raster_path, 1), largest_block=2**32):
+
         unique_lulc_codes.update(numpy.unique(data_block))
 
         for lulc_code in numpy.unique(data_block):
             lulc_code_count[lulc_code] += numpy.count_nonzero(
                 data_block == lulc_code)
+
+        #LOGGER.debug(offset_dict)
+        #LOGGER.debug(data_block)
+
+        #LOGGER.debug(numpy.unique(data_block))
+
+        # unique_lulc_codes.update(numpy.unique(data_block))
+
+        # for lulc_code in numpy.unique(data_block):
+        #     lulc_code_count[lulc_code] += numpy.count_nonzero(
+        #         data_block == lulc_code)
 
     LOGGER.debug(f'unique_lulc_codes: {list(sorted(unique_lulc_codes))}')
     LOGGER.debug(f'lulc code counts: {lulc_code_count}')
